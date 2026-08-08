@@ -61,7 +61,9 @@ const selectItems = document.querySelectorAll("[data-select-item]");
 const selectValue = document.querySelector("[data-selecct-value]");
 const filterBtn = document.querySelectorAll("[data-filter-btn]");
 
-select.addEventListener("click", function () { elementToggleFunc(this); });
+if (select) {
+  select.addEventListener("click", function () { elementToggleFunc(this); });
+}
 
 // add event in all select items
 for (let i = 0; i < selectItems.length; i++) {
@@ -115,27 +117,6 @@ for (let i = 0; i < filterBtn.length; i++) {
 
 
 
-// contact form variables
-const form = document.querySelector("[data-form]");
-const formInputs = document.querySelectorAll("[data-form-input]");
-const formBtn = document.querySelector("[data-form-btn]");
-
-// add event to all form input field
-for (let i = 0; i < formInputs.length; i++) {
-  formInputs[i].addEventListener("input", function () {
-
-    // check form validation
-    if (form.checkValidity()) {
-      formBtn.removeAttribute("disabled");
-    } else {
-      formBtn.setAttribute("disabled", "");
-    }
-
-  });
-}
-
-
-
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
@@ -147,13 +128,103 @@ for (let i = 0; i < navigationLinks.length; i++) {
     for (let i = 0; i < pages.length; i++) {
       if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
         pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
         window.scrollTo(0, 0);
       } else {
         pages[i].classList.remove("active");
+      }
+    }
+
+    for (let i = 0; i < navigationLinks.length; i++) {
+      if (navigationLinks[i] === this) {
+        navigationLinks[i].classList.add("active");
+      } else {
         navigationLinks[i].classList.remove("active");
       }
     }
 
   });
+}
+
+
+
+// ===== PRODUCT MODAL FUNCTIONALITY =====
+
+const productModalContainer = document.querySelector("[data-product-modal-container]");
+const productOverlay = document.querySelector("[data-product-overlay]");
+const productModalClose = document.querySelector("[data-product-modal-close]");
+const productInfoBtns = document.querySelectorAll("[data-product-info]");
+
+// Product modal elements
+const productModalImg = document.querySelector("[data-product-modal-img]");
+const productModalTitle = document.querySelector("[data-product-modal-title]");
+const productModalCategory = document.querySelector("[data-product-modal-category]");
+const productModalDescription = document.querySelector("[data-product-modal-description]");
+const productModalDownloads = document.querySelector("[data-product-modal-downloads]");
+
+// Product modal toggle function
+const productModalToggle = function () {
+  if (productModalContainer) {
+    productModalContainer.classList.toggle("active");
+    productOverlay.classList.toggle("active");
+  }
+}
+
+// Add click event to product info icons
+if (productInfoBtns.length > 0) {
+  for (let i = 0; i < productInfoBtns.length; i++) {
+    productInfoBtns[i].addEventListener("click", function (e) {
+      e.stopPropagation();
+
+      // Find the parent product card
+      const productCard = this.closest("[data-product-item]");
+      if (!productCard) return;
+
+      // Get product data
+      const img = productCard.querySelector(".project-img img");
+      const title = productCard.querySelector(".project-title");
+      const category = productCard.querySelector(".project-category");
+      const details = productCard.querySelector(".product-details");
+
+      // Populate modal
+      if (productModalImg && img) {
+        productModalImg.src = img.src;
+        productModalImg.alt = img.alt;
+      }
+      if (productModalTitle && title) {
+        productModalTitle.textContent = title.textContent;
+      }
+      if (productModalCategory && category) {
+        productModalCategory.textContent = category.textContent;
+      }
+
+      // Populate description
+      if (productModalDescription && details) {
+        const desc = details.querySelector(".product-description");
+        productModalDescription.innerHTML = desc ? '<p>' + desc.textContent + '</p>' : '';
+      }
+
+      // Populate downloads
+      if (productModalDownloads && details) {
+        const downloadsSection = details.querySelector(".product-downloads");
+        if (downloadsSection) {
+          productModalDownloads.innerHTML = downloadsSection.innerHTML;
+          productModalDownloads.style.display = 'block';
+        } else {
+          productModalDownloads.innerHTML = '';
+          productModalDownloads.style.display = 'none';
+        }
+      }
+
+      // Open modal
+      productModalToggle();
+    });
+  }
+}
+
+// Close product modal
+if (productModalClose) {
+  productModalClose.addEventListener("click", productModalToggle);
+}
+if (productOverlay) {
+  productOverlay.addEventListener("click", productModalToggle);
 }
