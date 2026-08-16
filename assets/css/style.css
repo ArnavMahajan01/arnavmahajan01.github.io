@@ -1100,12 +1100,12 @@ main {
 
 .project-item.active {
   display: block;
-  animation: scaleUp 0.25s ease forwards;
+  animation: scaleUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes scaleUp {
-  0% { transform: scale(0.5); }
-  100% { transform: scale(1); }
+  0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .project-item > a { width: 100%; }

@@ -82,16 +82,24 @@ const filterItems = document.querySelectorAll("[data-filter-item]");
 
 const filterFunc = function (selectedValue) {
 
+  let visibleIndex = 0;
+
   for (let i = 0; i < filterItems.length; i++) {
 
     const itemCategories = filterItems[i].dataset.category.split(" ");
+    const shouldShow = selectedValue === "all" || itemCategories.includes(selectedValue);
 
-    if (selectedValue === "all") {
+    // drop the class and force a reflow so the reveal animation replays
+    // even for items that were already visible before the switch
+    filterItems[i].classList.remove("active");
+
+    if (shouldShow) {
+      void filterItems[i].offsetWidth;
+      filterItems[i].style.animationDelay = `${visibleIndex * 60}ms`;
       filterItems[i].classList.add("active");
-    } else if (itemCategories.includes(selectedValue)) {
-      filterItems[i].classList.add("active");
+      visibleIndex++;
     } else {
-      filterItems[i].classList.remove("active");
+      filterItems[i].style.animationDelay = "";
     }
 
   }
@@ -141,6 +149,20 @@ for (let i = 0; i < navigationLinks.length; i++) {
         navigationLinks[i].classList.add("active");
       } else {
         navigationLinks[i].classList.remove("active");
+      }
+    }
+
+    // default the portfolio tab to the "Live" filter whenever it's opened
+    if (this.innerHTML.toLowerCase() === "portfolio") {
+      const liveBtn = Array.from(filterBtn).find((btn) => btn.innerText.toLowerCase() === "live");
+
+      if (liveBtn) {
+        selectValue.innerText = liveBtn.innerText;
+        filterFunc("live");
+
+        lastClickedBtn.classList.remove("active");
+        liveBtn.classList.add("active");
+        lastClickedBtn = liveBtn;
       }
     }
 
